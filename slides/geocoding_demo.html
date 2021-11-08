@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maps Services Comparision</title>
+
+  <link href="../common.css" rel="stylesheet">
+
+  <script src="../constants.js" type="text/javascript"></script>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+    integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+    integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
+    crossorigin="anonymous"></script>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+  <!-- jquery.json-viewer -->
+  <link href="https://unpkg.com/jquery.json-viewer@1.4.0/json-viewer/jquery.json-viewer.css" rel="stylesheet">
+  <script src="https://unpkg.com/jquery.json-viewer@1.4.0/json-viewer/jquery.json-viewer.js"
+    type="text/javascript"></script>
+
+  <!-- Google Maps API -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCm_xJwgUy6dELucxV_fLTUHeIFPDboDg&v=weekly"></script>
+
+  <!-- HERE Maps API -->
+  <script src="https://js.api.here.com/v3/3.1/mapsjs-core.js" type="text/javascript" charset="utf-8"></script>
+  <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js" type="text/javascript" charset="utf-8"></script>
+  <script src="https://js.api.here.com/v3/3.1/mapsjs-ui.js" type="text/javascript" charset="utf-8"></script>
+  <script src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css" />
+
+  <!-- Goong Maps API -->
+  <script src='https://cdn.jsdelivr.net/npm/@goongmaps/goong-js@1.0.9/dist/goong-js.js'></script>
+  <link href='https://cdn.jsdelivr.net/npm/@goongmaps/goong-js@1.0.9/dist/goong-js.css' rel='stylesheet' />
+</head>
+
+<body>
+
+  <div class="container-fluid h-full d-flex flex-column">
+    <div class="row">
+      <div class="col">
+        <h2>Geocoding demo</h2>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <input id="geocoding_address" type="text" class="form-control" placeholder="Type address here then enter" />
+      </div>
+    </div>
+    <div class="row flex-grow-1 mt-3">
+      <div class="col d-flex flex-column">
+        <p class="fs-5 fw-bold">Google Maps</p>
+        <div id="geocoding__googlemaps__loading" class="spinner-border" role="status" style="display: none;"></div>
+        <pre id="geocoding__googlemaps"></pre>
+      </div>
+    </div>
+    <div class="row flex-grow-1">
+      <div class="col d-flex flex-column">
+        <p class="fs-5 fw-bold">HERE Maps</p>
+        <div id="geocoding__heremaps__loading" class="spinner-border" role="status" style="display: none;"></div>
+        <pre id="geocoding__heremaps"></pre>
+      </div>
+    </div>
+    <div class="row flex-grow-1">
+      <div class="col d-flex flex-column">
+        <p class="fs-5 fw-bold">Goong Maps</p>
+        <div id="geocoding__goongmaps__loading" class="spinner-border" role="status" style="display: none;"></div>
+        <pre id="geocoding__goongmaps"></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="slides-nav p-3 d-flex flex-row">
+    <a href="geocoding_overview.html" role="button" class="left btn btn-outline-primary mx-2">
+      <svg id="i-chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="none"
+        stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
+        <path d="M20 30 L8 16 20 2" />
+      </svg>
+    </a>
+    <a href="distance_matrix_overview.html" role="button" class="right btn btn-outline-primary mx-2">
+      <svg id="i-chevron-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32"
+        fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
+        <path d="M12 30 L24 16 12 2" />
+      </svg>
+    </a>
+  </div>
+
+  <script>
+    async function googleMapsGeocode(address) {
+      const resp = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?key=${GOOGLE_MAPS_API_KEY}&address=${encodeURI(address)}`);
+      return resp.json();
+    }
+
+    async function hereMapsGeocode(address) {
+      const resp = await fetch(`https://geocode.search.hereapi.com/v1/geocode?apiKey=${HERE_MAPS_REST_API_KEY}&q=${encodeURI(address)}`);
+      return resp.json();
+    }
+
+    async function goongMapsGeocode(address) {
+      const resp = await fetch(`https://rsapi.goong.io/geocode?api_key=${GOONG_MAPS_API_KEY}&address=${encodeURI(address)}`);
+      return resp.json();
+    }
+
+    function clearJsonViewers() {
+      $('#geocoding__googlemaps').jsonViewer({});
+      $('#geocoding__heremaps').jsonViewer({});
+      $('#geocoding__goongmaps').jsonViewer({});
+    }
+
+    async function geocode(address) {
+      address = address.trim();
+      if (address.length == 0) return;
+
+      $('#geocoding__googlemaps__loading').show();
+      $('#geocoding__heremaps__loading').show();
+      $('#geocoding__goongmaps__loading').show();
+
+      clearJsonViewers(); 
+
+      const [googleMapsResult, hereMapsResult, goongMapsResult] = await Promise.all([
+        googleMapsGeocode(address),
+        hereMapsGeocode(address),
+        goongMapsGeocode(address),
+      ]);
+
+      $('#geocoding__googlemaps').jsonViewer(googleMapsResult);
+      $('#geocoding__heremaps').jsonViewer(hereMapsResult);
+      $('#geocoding__goongmaps').jsonViewer(goongMapsResult);
+
+      $('#geocoding__googlemaps__loading').hide();
+      $('#geocoding__heremaps__loading').hide();
+      $('#geocoding__goongmaps__loading').hide();
+    }
+
+    $('#geocoding_address').on('change', async function (e) {
+      await geocode(e.target.value);
+    });
+    $('#geocoding_address').on('keyup', async function (e) {
+      if (e.key === 'Enter' || e.keyCode === 13) {
+        await geocode(e.target.value);
+      }
+    });
+
+    const addresses = [
+      'nha tho duc ba',
+      '782/11 pham van bach',
+      'fpt university',
+    ];
+
+    let curAddress = 0;
+    $('#geocoding_address').val(addresses[curAddress]);
+    geocode(addresses[curAddress]);
+
+    $('.slides-nav .right').on('click', function (e) {
+      curAddress += 1;
+      
+      if (curAddress <= addresses.length) {
+        e.preventDefault();
+      }
+
+      if (curAddress < addresses.length) {
+        $('#geocoding_address').val(addresses[curAddress]);
+        geocode(addresses[curAddress]);
+      } else if (curAddress == addresses.length) {
+        $('#geocoding_address').val('');
+        clearJsonViewers();
+      }
+    });
+  </script>
+
+</body>
+
+</html>

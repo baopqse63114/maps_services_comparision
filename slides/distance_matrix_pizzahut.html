@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maps Services Comparision</title>
+
+  <link href="../common.css" rel="stylesheet">
+
+  <script src="../constants.js" type="text/javascript"></script>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+    integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+    integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
+    crossorigin="anonymous"></script>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+  <!-- datatables -->
+  <link href="//cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" rel="stylesheet">
+  <script src="//cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js" type="text/javascript"></script>
+
+  <!-- Google Maps API -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCm_xJwgUy6dELucxV_fLTUHeIFPDboDg&v=weekly"></script>
+
+  <!-- lodash -->
+  <script src="https://unpkg.com/lodash@4.17.21/lodash.js" type="text/javascript"></script>
+</head>
+
+<body>
+
+  <div class="container-fluid h-full d-flex flex-column">
+    <div class="row">
+      <div class="col">
+        <h2>Distance Matrix - Pizzahut Demo</h2>
+      </div>
+    </div>
+    <div class="row">
+      <p class="fs-5">Click on the map below to set the starting point</p>
+      <div id="embedding__googlemap" style="height: 400px;"></div>
+    </div>
+    <div class="row mt-3 flex-nowrap">
+      <div class="col">
+        <h4>Google Maps</h4>
+        <table id="googlemaps_result"></table>
+      </div>
+      <div class="col">
+        <h4>HERE Maps</h4>
+        <table id="heremaps_result"></table>
+      </div>
+      <div class="col">
+        <h4>Goong Maps</h4>
+        <table id="goongmaps_result"></table>
+      </div>
+    </div>
+  </div>
+  <script>
+    const centerLat = 10.811857;
+    const centerLng = 106.6777233;
+
+    const pizzahutPositions = [
+      { lat: 10.7669156, lng: 106.6919621 },
+      { lat: 10.763349, lng: 106.6656628 },
+      { lat: 10.864255, lng: 106.6475703 },
+      { lat: 10.7874349, lng: 106.7621686 },
+      { lat: 10.8028868, lng: 106.7268561 },
+      { lat: 10.7977371, lng: 106.7294626 },
+      { lat: 10.7895524, lng: 106.6723185 },
+      { lat: 10.7704974, lng: 106.6822679 },
+      { lat: 10.7582943, lng: 106.6981872 },
+      { lat: 10.756442, lng: 106.6739353 },
+      { lat: 10.7498705, lng: 106.6418973 },
+      { lat: 10.7550617, lng: 106.7228189 },
+      { lat: 10.7410229, lng: 106.6998543 },
+      { lat: 10.8488203, lng: 106.7710607 },
+      { lat: 10.828151, lng: 106.7665799 },
+      { lat: 10.7340032, lng: 106.68743 },
+      { lat: 10.7427497, lng: 106.6097422 },
+      { lat: 10.8149317, lng: 106.6027643 },
+      { lat: 10.7568296, lng: 106.6214386 },
+      { lat: 10.8056241, lng: 106.7135207 },
+      { lat: 10.81009, lng: 106.6930469 },
+      { lat: 10.7951302, lng: 106.7071548 },
+      { lat: 10.8218234, lng: 106.6826098 },
+      { lat: 10.8461775, lng: 106.6421993 },
+      { lat: 10.8454266, lng: 106.6629222 },
+      { lat: 10.8873838, lng: 106.5959503 },
+      { lat: 10.8603507, lng: 106.6061588 },
+      { lat: 10.7971813, lng: 106.688498 },
+      { lat: 10.7874813, lng: 106.6609734 },
+      { lat: 10.7978079, lng: 106.6448932 },
+      { lat: 10.805781, lng: 106.6656743 },
+      { lat: 10.8011622, lng: 106.6152058 },
+      { lat: 10.7917376, lng: 106.6351159 },
+      { lat: 10.8309176, lng: 106.7215862 },
+      { lat: 10.8729148, lng: 106.7311459 },
+      { lat: 10.8510788, lng: 106.7541933 },
+      { lat: 10.8123418, lng: 106.7113931 },
+    ];
+
+    const svgMarker = {
+      path: "M10.453 14.016l6.563-6.609-1.406-1.406-5.156 5.203-2.063-2.109-1.406 1.406zM12 2.016q2.906 0 4.945 2.039t2.039 4.945q0 1.453-0.727 3.328t-1.758 3.516-2.039 3.070-1.711 2.273l-0.75 0.797q-0.281-0.328-0.75-0.867t-1.688-2.156-2.133-3.141-1.664-3.445-0.75-3.375q0-2.906 2.039-4.945t4.945-2.039z",
+      fillColor: "blue",
+      fillOpacity: 0.6,
+      strokeWeight: 0,
+      rotation: 0,
+      scale: 2,
+      anchor: new google.maps.Point(15, 20),
+    };
+
+    const map = new google.maps.Map(document.getElementById("embedding__googlemap"), {
+      center: { lat: centerLat, lng: centerLng },
+      zoom: 12,
+    });
+
+    for (const p of pizzahutPositions) {
+      new google.maps.Marker({
+        position: p,
+        map: map
+      });
+    }
+
+    let curMarker = null;
+    let originLatLng = null;
+
+    let googleMapsDataTableInitialized = false;
+    let hereMapsDataTableInitialized = false;
+    let goongMapsDataTableInitialized = false;
+
+    map.addListener('click', async function (e) {
+      if (curMarker) {
+        curMarker.setMap(null);
+      }
+
+      curMarker = new google.maps.Marker({
+        position: e.latLng,
+        map: map,
+        icon: svgMarker,
+      });
+      originLatLng = { lat: e.latLng.lat(), lng: e.latLng.lng() };
+
+      const [googleMapsResults, hereMapsResult, goongMapsResult] = await Promise.all([
+        googleMapsDistanceMatrix(originLatLng, pizzahutPositions),
+        hereMapsDistanceMatrix(originLatLng, pizzahutPositions),
+        goongMapsDistanceMatrix(originLatLng, pizzahutPositions)
+      ]);
+
+      const googleMapsResultData = [];
+      for (const result of googleMapsResults) {
+        const dists = result.rows[0].elements;
+        const dests = result.destinationAddresses;
+
+        for (let i = 0; i < dists.length; i += 1) {
+          googleMapsResultData.push([dests[i], dists[i].distance.value, dists[i].duration.value])
+        }
+      }
+      if (googleMapsDataTableInitialized) {
+        $('#googlemaps_result').DataTable().clear();
+        $('#googlemaps_result').DataTable().destroy();
+      }
+      $('#googlemaps_result').DataTable({
+        data: googleMapsResultData,
+        columns: [
+          { title: 'Destination address' },
+          { title: 'Distance (m)' },
+          { title: 'Duration (second)' },
+        ],
+      });
+      googleMapsDataTableInitialized = true;
+
+      const hereMapsResultData = [];
+      for (let i = 0; i < hereMapsResult.matrix.numDestinations; i += 1) {
+        hereMapsResultData.push([googleMapsResultData[i][0], hereMapsResult.matrix.distances[i], hereMapsResult.matrix.travelTimes[i]]);
+      }
+      if (hereMapsDataTableInitialized) {
+        $('#heremaps_result').DataTable().clear();
+        $('#heremaps_result').DataTable().destroy();
+      }
+      $('#heremaps_result').DataTable({
+        data: hereMapsResultData,
+        columns: [
+          { title: 'Destination address' },
+          { title: 'Distance (m)' },
+          { title: 'Duration (second)' },
+        ],
+      });
+      hereMapsDataTableInitialized = true;
+
+      const goongMapsResultData = [];
+      let i = 0;
+      for (const e of goongMapsResult.rows[0].elements) {
+        goongMapsResultData.push([googleMapsResultData[i][0], e.distance.value, e.duration.value]);
+        i += 1;
+      }
+      if (goongMapsDataTableInitialized) {
+        $('#goongmaps_result').DataTable().clear();
+        $('#goongmaps_result').DataTable().destroy();
+      }
+      $('#goongmaps_result').DataTable({
+        data: goongMapsResultData,
+        columns: [
+          { title: 'Destination address' },
+          { title: 'Distance (m)' },
+          { title: 'Duration (second)' },
+        ],
+      });
+      goongMapsDataTableInitialized = true;
+    });
+
+    const googleMapsDistanceMatrixService = new google.maps.DistanceMatrixService();
+
+    async function googleMapsDistanceMatrix(origin, destinations) {
+      origin = new google.maps.LatLng(origin.lat, origin.lng);
+      destinations = destinations.map((p) => new google.maps.LatLng(p.lat, p.lng));
+
+      const promises = [];
+      for (const chunk of _.chunk(pizzahutPositions, 25)) {
+        promises.push(new Promise((resolve, reject) => {
+          googleMapsDistanceMatrixService.getDistanceMatrix({
+            origins: [origin],
+            destinations: chunk,
+            travelMode: 'DRIVING',
+          }, (resp, result) => {
+            resolve(resp);
+          });
+        }));
+      }
+
+      return await Promise.all(promises);
+    }
+
+    async function hereMapsDistanceMatrix(origin, destinations) {
+      const resp = await fetch(`https://matrix.router.hereapi.com/v8/matrix?apiKey=${HERE_MAPS_REST_API_KEY}&async=false`, {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          origins: [origin],
+          destinations,
+          regionDefinition: {
+            type: 'autoCircle'
+          },
+          matrixAttributes: [
+            "distances", "travelTimes"
+          ]
+        })
+      });
+
+      return resp.json();
+    }
+
+    async function goongMapsDistanceMatrix(origin, destinations) {
+      origin = `${origin.lat},${origin.lng}`
+      destinations = destinations.map((p) => `${p.lat},${p.lng}`).join('|');
+
+      const resp = await fetch(`https://rsapi.goong.io/DistanceMatrix?origins=${origin}&destinations=${destinations}&vehicle=car&api_key=${GOONG_MAPS_API_KEY}`);
+      return resp.json();
+    }
+  </script>
+
+  <div class="slides-nav p-3 d-flex flex-row">
+    <a href="distance_matrix_overview.html" role="button" class="left btn btn-outline-primary mx-2">
+      <svg id="i-chevron-left" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="none"
+        stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
+        <path d="M20 30 L8 16 20 2" />
+      </svg>
+    </a>
+    <a href="price_and_limit_comparision.html" role="button" class="right btn btn-outline-primary mx-2">
+      <svg id="i-chevron-right" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32"
+        fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
+        <path d="M12 30 L24 16 12 2" />
+      </svg>
+    </a>
+  </div>
+
+</body>
+
+</html>
